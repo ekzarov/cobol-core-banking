@@ -43,4 +43,4 @@
 
            CLOSE ACCOUNT-FILE.
            DISPLAY 'Database initialized.'.
-           STOP RUN.
+           GOBACK.

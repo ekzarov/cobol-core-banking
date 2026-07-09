@@ -83,14 +83,14 @@
 
            IF WS-FOUND-FLAG = 'Y'
               DISPLAY 'Saving...'
-              MOVE 'cmd /c del ACCOUNTS.DAT' TO WS-CMD
+              MOVE 'rm -f ACCOUNTS.DAT' TO WS-CMD
               CALL 'SYSTEM' USING WS-CMD
-              MOVE 'cmd /c ren ACCOUNTS.TMP ACCOUNTS.DAT' TO WS-CMD
+              MOVE 'mv ACCOUNTS.TMP ACCOUNTS.DAT' TO WS-CMD
               CALL 'SYSTEM' USING WS-CMD
            ELSE
               DISPLAY 'Not Found.'
-              MOVE 'cmd /c del ACCOUNTS.TMP' TO WS-CMD
+              MOVE 'rm -f ACCOUNTS.TMP' TO WS-CMD
               CALL 'SYSTEM' USING WS-CMD
            END-IF.
 
-           STOP RUN.
+           GOBACK.

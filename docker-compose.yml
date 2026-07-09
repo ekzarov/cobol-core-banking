@@ -1,0 +1,13 @@
+services:
+  core-banking:
+    build: .
+    image: legacy-core-banking-cobol:local
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    volumes:
+      - banking-data:/app/data
+    command: ./BANK-MAIN
+
+volumes:
+  banking-data:

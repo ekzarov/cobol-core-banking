@@ -25,6 +25,9 @@
 
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
+           MOVE 'N' TO WS-EOF-FLAG
+           MOVE 0 TO WS-TOTAL-BAL
+           MOVE 0 TO WS-COUNT
            OPEN INPUT ACCOUNT-FILE
            DISPLAY ' '
            DISPLAY '--- ACCOUNT BALANCE SUMMARY REPORT ---'
@@ -54,4 +57,4 @@
            DISPLAY 'BANK BALANCE: ' WS-FORMATTED-BAL
            DISPLAY PRINT-LINE.
 
-           STOP RUN.
+           GOBACK.
