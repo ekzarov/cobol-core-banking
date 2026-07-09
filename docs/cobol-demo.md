@@ -96,6 +96,10 @@ BANK BALANCE: $        17,600.50
 
 Also confirm the report lists the three accounts above.
 
+Legacy display detail: although the report prints a header that looks tabular
+(`NUM | NAME | BALANCE`), each account is actually printed vertically across
+separate lines: account number, then name, then balance, then a blank line.
+
 ### A4. Deposit money - UF-003 Account Transaction Processing
 
 At `Option:` enter:
@@ -267,7 +271,19 @@ Saving...
 
 The account remains at `$100.00`.
 
-### A12. Exit - UF-001 Console Menu & Program Dispatch
+### A12. Missing account file behavior - UF-003 / UF-004
+
+This is normally not part of the happy-path demo because `Init Database` creates
+`ACCOUNTS.DAT`. Still, it is important for migration analysis:
+
+- `TRANS-PROC.CBL` opens `ACCOUNTS.DAT` with `OPEN INPUT ACCOUNT-FILE` and has no
+  custom recovery branch if the file is missing.
+- `REPORT-GEN.CBL` has the same kind of missing-file exposure.
+
+Expected legacy behavior if the file is absent: the program falls through to
+COBOL runtime/file handling rather than showing a business-friendly error.
+
+### A13. Exit - UF-001 Console Menu & Program Dispatch
 
 At `Option:` enter:
 
@@ -306,8 +322,17 @@ After withdrawal:     17,750.50
 - The "database" is a flat file: `ACCOUNTS.DAT`.
 - Account updates use a classic sequential-file pattern: write all records to
   `ACCOUNTS.TMP`, then replace `ACCOUNTS.DAT`.
+- `ACCOUNTS.CPY` exists, but the active programs do not `COPY` it. They redeclare
+  `ACCOUNT-REC` inline in each program.
+- Important migration warning: `ACCOUNTS.CPY` defines balance as `COMP-3`, while
+  the active inline FD layouts use display numeric fields and `ACCOUNTS.DAT` is a
+  line-sequential text file. Do not treat the copybook as the active persistence
+  contract without reconciling this mismatch.
 - The copybook defines account statuses `A`, `C`, and `S`, but the current
   runtime flow only seeds `A` and does not enforce status-specific behavior.
+- Persistence depends on shell commands called via `CALL 'SYSTEM'`; the Docker
+  baseline uses Linux `rm` / `mv`. The legacy code does not check the shell return
+  status, so a failed file replacement can be silent.
 - There is no authentication, authorization, audit trail, API, browser UI, or
   relational database.
 
@@ -323,3 +348,4 @@ After withdrawal:     17,750.50
 - [ ] Invalid menu option shows `Invalid.`.
 - [ ] Unknown account shows `Not Found.`.
 - [ ] Insufficient funds shows `No Funds.`.
+- [ ] Report layout is observed as vertical account blocks, not a real table.
